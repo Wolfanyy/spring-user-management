@@ -34,9 +34,7 @@ public class UserServiceImpl implements UserService {
 
         validateId(id);
 
-        return userRepository.findById(id)
-                .orElseThrow(() ->
-                        new UserNotFoundException(id));
+        return getUserOrThrow(id);
     }
 
     @Override
@@ -50,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
         validateId(user.getId());
 
-        findById(user.getId());
+        getUserOrThrow(user.getId());
 
         validateEmailUniqueness(user);
 
@@ -62,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
         validateId(id);
 
-        findById(id);
+        getUserOrThrow(id);
 
         userRepository.deleteById(id);
     }
@@ -98,5 +96,12 @@ public class UserServiceImpl implements UserService {
                     "User id must be positive"
             );
         }
+    }
+
+    private User getUserOrThrow(Long id) {
+
+        return userRepository.findById(id)
+                .orElseThrow(() ->
+                        new UserNotFoundException(id));
     }
 }
