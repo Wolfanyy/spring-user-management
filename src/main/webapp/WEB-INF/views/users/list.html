@@ -1,10 +1,134 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Users</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
 </head>
+
 <body>
-<h1>User Management</h1>
-<p>Application is running.</p>
+
+<header class="header">
+
+    <div class="header-content">
+
+        <div class="logo">
+            User<span>CRUD</span>
+        </div>
+
+        <a class="btn btn-primary"
+           th:href="@{/users/new}">
+            Add User
+        </a>
+
+    </div>
+
+
+</header>
+
+<main class="container">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1 class="page-title">
+                Users
+            </h1>
+
+            <p class="page-subtitle">
+                Total users:
+                <span th:text="${#lists.size(users)}">0</span>
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div th:if="${#lists.isEmpty(users)}"
+             class="empty-state">
+            No users found
+        </div>
+
+        <table th:unless="${#lists.isEmpty(users)}">
+
+            <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Actions</th>
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr th:each="user : ${users}">
+
+                <td th:text="${user.id}">1</td>
+
+                <td th:text="${user.name}">
+                    John
+                </td>
+
+                <td th:text="${user.lastName}">
+                    Doe
+                </td>
+
+                <td class="email"
+                    th:text="${user.email}">
+                    john@example.com
+                </td>
+
+                <td th:text="${user.age}">
+                    25
+                </td>
+
+                <td class="actions-column">
+
+                    <a class="btn btn-secondary"
+                       th:href="@{/users/{id}/edit(id=${user.id})}">
+                        Edit
+                    </a>
+
+                    <form class="inline-form"
+                          method="post"
+                          th:action="@{/users/{id}/delete(id=${user.id})}">
+
+                        <button type="submit"
+                                class="btn btn-danger"
+                                th:attr="onclick=|return confirm('Delete user ${user.name} ${user.lastName}?');|">
+                            Delete
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
 </body>
+
 </html>
