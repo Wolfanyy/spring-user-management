@@ -1,7 +1,6 @@
 package com.github.wolfanyy.springusermanagement.controller;
 
 import com.github.wolfanyy.springusermanagement.dto.UserRequest;
-import com.github.wolfanyy.springusermanagement.entity.User;
 import com.github.wolfanyy.springusermanagement.mapper.UserMapper;
 import com.github.wolfanyy.springusermanagement.service.UserService;
 import jakarta.validation.Valid;
@@ -92,6 +91,16 @@ public class UserController {
         userService.update(
                 userMapper.toEntity(userRequest)
         );
+
+        return "redirect:/users";
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(
+            @PathVariable Long id
+    ) {
+
+        userService.deleteById(id);
 
         return "redirect:/users";
     }

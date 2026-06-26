@@ -82,20 +82,20 @@
                 <td th:text="${user.id}">1</td>
 
                 <td th:text="${user.name}">
-                    John
+
                 </td>
 
                 <td th:text="${user.lastName}">
-                    Doe
+
                 </td>
 
                 <td class="email"
                     th:text="${user.email}">
-                    john@example.com
+
                 </td>
 
                 <td th:text="${user.age}">
-                    25
+
                 </td>
 
                 <td class="actions-column">
@@ -107,7 +107,11 @@
 
                     <form class="inline-form"
                           method="post"
-                          th:action="@{/users/{id}/delete(id=${user.id})}">
+                          th:action="@{/users/{id}(id=${user.id})}">
+
+                        <input type="hidden"
+                               name="_method"
+                               value="delete"/>
 
                         <button type="submit"
                                 class="btn btn-danger"
