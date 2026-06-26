@@ -1,16 +1,14 @@
 package com.github.wolfanyy.springusermanagement.controller;
 
 import com.github.wolfanyy.springusermanagement.dto.UserRequest;
+import com.github.wolfanyy.springusermanagement.entity.User;
 import com.github.wolfanyy.springusermanagement.mapper.UserMapper;
 import com.github.wolfanyy.springusermanagement.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/users")
@@ -56,6 +54,42 @@ public class UserController {
         }
 
         userService.create(
+                userMapper.toEntity(userRequest)
+        );
+
+        return "redirect:/users";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(
+            @PathVariable Long id,
+            Model model
+    ) {
+        model.addAttribute(
+                "user",
+                userMapper.toRequest(
+                        userService.findById(id)
+                )
+        );
+
+        return "users/edit";
+    }
+
+    @PutMapping("/{id}")
+    public String update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("user")
+            UserRequest userRequest,
+            BindingResult bindingResult
+    ) {
+
+        if (bindingResult.hasErrors()) {
+            return "users/edit";
+        }
+
+        userRequest.setId(id);
+
+        userService.update(
                 userMapper.toEntity(userRequest)
         );
 

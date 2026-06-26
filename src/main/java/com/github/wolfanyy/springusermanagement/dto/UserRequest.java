@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class UserRequest {
 
+    private Long id;
+
     @NotBlank(message = "Name cannot be empty")
     @Size(
             min = 3,

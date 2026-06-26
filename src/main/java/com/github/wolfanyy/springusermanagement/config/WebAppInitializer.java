@@ -1,6 +1,8 @@
 package com.github.wolfanyy.springusermanagement.config;
 
+import jakarta.servlet.Filter;
 import org.springframework.lang.Nullable;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class WebAppInitializer
@@ -21,5 +23,12 @@ public class WebAppInitializer
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
+    }
+
+    @Override
+    protected Filter[] getServletFilters() {
+        return new Filter[]{
+                new HiddenHttpMethodFilter()
+        };
     }
 }
