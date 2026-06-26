@@ -3,8 +3,8 @@ package com.github.wolfanyy.springusermanagement.service;
 import com.github.wolfanyy.springusermanagement.entity.User;
 import com.github.wolfanyy.springusermanagement.exception.DuplicateEmailException;
 import com.github.wolfanyy.springusermanagement.exception.UserNotFoundException;
-import com.github.wolfanyy.springusermanagement.exception.ValidationException;
 import com.github.wolfanyy.springusermanagement.repository.UserRepository;
+import com.github.wolfanyy.springusermanagement.validation.UserValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +15,18 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserValidator userValidator;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository,
+                           UserValidator userValidator) {
         this.userRepository = userRepository;
+        this.userValidator = userValidator;
     }
 
     @Override
     public User create(User user) {
+
+        userValidator.normalize(user);
 
         validateEmailUniqueness(user);
 
@@ -32,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public User findById(Long id) {
 
-        validateId(id);
+        userValidator.validateId(id);
 
         return getUserOrThrow(id);
     }
@@ -46,7 +51,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(User user) {
 
-        validateId(user.getId());
+        userValidator.validateId(user.getId());
+
+        userValidator.normalize(user);
 
         getUserOrThrow(user.getId());
 
@@ -58,7 +65,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
 
-        validateId(id);
+        userValidator.validateId(id);
 
         getUserOrThrow(id);
 
@@ -81,21 +88,6 @@ public class UserServiceImpl implements UserService {
                         );
                     }
                 });
-    }
-
-    private void validateId(Long id) {
-
-        if (id == null) {
-            throw new ValidationException(
-                    "User id cannot be null"
-            );
-        }
-
-        if (id <= 0) {
-            throw new ValidationException(
-                    "User id must be positive"
-            );
-        }
     }
 
     private User getUserOrThrow(Long id) {

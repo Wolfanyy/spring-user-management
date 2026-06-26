@@ -1,8 +1,6 @@
 package com.github.wolfanyy.springusermanagement.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,20 +36,4 @@ public class User {
 
     @Column(name = "age", nullable = false)
     private Integer age;
-
-    @PrePersist
-    @PreUpdate
-    private void normalize() {
-        if (name != null) {
-            name = name.trim();
-        }
-
-        if (lastName != null) {
-            lastName = lastName.trim();
-        }
-
-        if (email != null) {
-            email = email.trim().toLowerCase();
-        }
-    }
 }
