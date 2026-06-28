@@ -22,9 +22,9 @@ The application allows creating, viewing, updating, and deleting users while dem
 * View all users
 * Update existing users
 * Delete users
-* DTO mapping using MapStruct
 * Bean Validation
 * Email uniqueness validation
+* DTO mapping using MapStruct
 * Global exception handling
 * Responsive user interface
 * Layered architecture (Controller → Service → Repository)
@@ -118,7 +118,7 @@ src/main/java
 ├── mapper
 ├── repository
 ├── service
-└── validation
+└── util
 ```
 
 ## Screenshots
