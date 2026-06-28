@@ -3,8 +3,9 @@ package com.github.wolfanyy.springusermanagement.service;
 import com.github.wolfanyy.springusermanagement.entity.User;
 import com.github.wolfanyy.springusermanagement.exception.DuplicateEmailException;
 import com.github.wolfanyy.springusermanagement.exception.UserNotFoundException;
+import com.github.wolfanyy.springusermanagement.exception.ValidationException;
 import com.github.wolfanyy.springusermanagement.repository.UserRepository;
-import com.github.wolfanyy.springusermanagement.validation.UserValidator;
+import com.github.wolfanyy.springusermanagement.util.UserNormalizer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,18 +16,18 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserValidator userValidator;
+    private final UserNormalizer userNormalizer;
 
     public UserServiceImpl(UserRepository userRepository,
-                           UserValidator userValidator) {
+                           UserNormalizer userNormalizer) {
         this.userRepository = userRepository;
-        this.userValidator = userValidator;
+        this.userNormalizer = userNormalizer;
     }
 
     @Override
     public User create(User user) {
 
-        userValidator.normalize(user);
+        userNormalizer.normalize(user);
 
         validateEmailUniqueness(user);
 
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public User findById(Long id) {
 
-        userValidator.validateId(id);
+        validateId(id);
 
         return getUserOrThrow(id);
     }
@@ -51,11 +52,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(User user) {
 
-        userValidator.validateId(user.getId());
-
-        userValidator.normalize(user);
+        validateId(user.getId());
 
         getUserOrThrow(user.getId());
+
+        userNormalizer.normalize(user);
 
         validateEmailUniqueness(user);
 
@@ -65,11 +66,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
 
-        userValidator.validateId(id);
+        validateId(id);
 
         getUserOrThrow(id);
 
         userRepository.deleteById(id);
+    }
+
+    private void validateId(Long id) {
+
+        if (id == null) {
+            throw new ValidationException(
+                    "User id cannot be null"
+            );
+        }
+
+        if (id <= 0) {
+            throw new ValidationException(
+                    "User id must be positive"
+            );
+        }
     }
 
     private void validateEmailUniqueness(User user) {
